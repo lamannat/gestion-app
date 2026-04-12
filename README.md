@@ -1,3 +1,36 @@
+```
+└── 📁gestion-app
+    └── 📁app
+        └── 📁api
+            └── 📁tasks
+                └── 📁[id]
+                    ├── route.js
+                ├── route.js
+        ├── layout.jsx
+        ├── page.jsx
+    └── 📁backend
+        └── 📁.venv
+        └── 📁modules
+            └── 📁gastos
+                ├── __init__.py
+                ├── routes.py
+            └── 📁usuarios
+        ├── .env
+        ├── app.py
+        ├── database.py
+        ├── Pipfile
+        ├── Pipfile.lock
+    └── 📁components
+        ├── TaskCard.jsx
+    └── 📁lib
+        ├── supabase.js
+    ├── .gitignore
+    ├── jsconfig.json
+    ├── next.config.js
+    ├── package.json
+    ├── Pipfile
+    └── README.md
+```
 # Gestion App
 
 Aplicacion V0 para el trabajo practico de Gestion del Desarrollo de Sistemas Informaticos. La V0 implementa un frontend en Next.js y un backend en Flask para crear usuarios, iniciar sesion y consultar el perfil del usuario autenticado.

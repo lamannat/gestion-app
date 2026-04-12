@@ -4,6 +4,11 @@ node_modules/
 !backend/.env.example
 .next/
 dist/
+# Python (Backend)
+backend/.venv/
+backend/.env
+__pycache__/
+*.py[cod]
 __pycache__/
 *.pyc
 .venv/
