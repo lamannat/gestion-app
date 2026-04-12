@@ -1,0 +1,30 @@
+```
+└── 📁gestion-app
+    └── 📁app
+        └── 📁api
+            └── 📁tasks
+                └── 📁[id]
+                    ├── route.js
+                ├── route.js
+        ├── layout.jsx
+        ├── page.jsx
+    └── 📁backend
+        └── 📁.venv
+        └── 📁modules
+            └── 📁gastos
+        ├── .env
+        ├── app.py
+        ├── database.py
+        ├── Pipfile
+        ├── Pipfile.lock
+        ├── README.md
+    └── 📁components
+        ├── TaskCard.jsx
+    └── 📁lib
+        ├── supabase.js
+    ├── .gitignore
+    ├── jsconfig.json
+    ├── next.config.js
+    ├── package.json
+    └── README.md
+```

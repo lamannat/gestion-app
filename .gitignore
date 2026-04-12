@@ -3,3 +3,8 @@ node_modules/
 .env.local
 .next/
 dist/
+# Python (Backend)
+backend/.venv/
+backend/.env
+__pycache__/
+*.py[cod]
