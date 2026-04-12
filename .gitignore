@@ -1,6 +1,7 @@
 node_modules/
-.env
-.env.local
+.env*
+!.env.example
+!backend/.env.example
 .next/
 dist/
 # Python (Backend)
@@ -8,3 +9,8 @@ backend/.venv/
 backend/.env
 __pycache__/
 *.py[cod]
+__pycache__/
+*.pyc
+.venv/
+backend/.venv/
+.idea/
