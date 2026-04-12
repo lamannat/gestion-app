@@ -1,15 +1,3 @@
-from flask import Flask
-from flask_cors import CORS
-from modules.gastos.routes import gastos_bp
-
-app = Flask(__name__)
-CORS(app) # Permite que el frontend (Next.js) se conecte
-
-# Registramos el módulo. Todas las rutas empezarán con /api/gastos
-app.register_blueprint(gastos_bp, url_prefix='/api/gastos')
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
 import os
 import uuid
 
@@ -18,10 +6,14 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from supabase import create_client
 
+from modules.gastos.routes import gastos_bp
+
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, origins=os.getenv("FRONTEND_ORIGIN", "http://localhost:3000"))
+
+app.register_blueprint(gastos_bp, url_prefix='/api/gastos')
 
 
 def get_supabase():
@@ -36,7 +28,7 @@ def request_credentials():
     password = body.get("password") or ""
 
     if not username or not password:
-        return None, None, (jsonify({"error": "Usuario y contrasena son requeridos"}), 400)
+        return None, None, (jsonify({"error": "Usuario y contraseña son requeridos"}), 400)
 
     return username, password, None
 
@@ -86,7 +78,7 @@ def login_user():
     )
 
     if not result.data or result.data[0]["password"] != password:
-        return jsonify({"error": "Usuario o contrasena invalidos"}), 400
+        return jsonify({"error": "Usuario o contraseña invalidos"}), 400
 
     return jsonify({"id": result.data[0]["id"]}), 200
 
