@@ -1,77 +1,103 @@
-from flask import Blueprint, request, jsonify
+from decimal import Decimal, InvalidOperation
+
+from flask import Blueprint, jsonify, request
+
 from database import supabase
 
-gastos_bp = Blueprint('gastos', __name__)
+gastos_bp = Blueprint("gastos", __name__)
 
-@gastos_bp.route('/', methods=['POST'])
-def registrar_gasto():
-    data = request.json
-    print(f"DEBUG - Datos recibidos: {data}")
-    
-    if data is None:
-        return jsonify({"status": "error", "message": "No se recibió un JSON válido"}), 400
 
-  
-    nuevo_gasto = {
-        "descripcion": data.get('descripcion'),
-        "monto": data.get('monto'),
-        "fecha_gasto": data.get('fecha_gasto'), 
-        "categoria": data.get('categoria'),
-        "estado": data.get('estado', 'Pendiente'),
-        "metodo_pago": data.get('metodo_pago'),
-        "comprobante": data.get('comprobante'), 
-        "unidad_id": data.get('unidad_id') 
-    }
-
+def parse_positive_amount(value):
     try:
-        # Validación de campos obligatorios
-        if not nuevo_gasto["descripcion"] or not nuevo_gasto["monto"]:
-            return jsonify({"status": "error", "message": "Descripción y monto son obligatorios"}), 400
+        amount = Decimal(str(value))
+    except (InvalidOperation, TypeError, ValueError):
+        return None
 
-     
-        res = supabase.table("gastos").insert(nuevo_gasto).execute()
-        return jsonify({"status": "success", "data": res.data}), 201
-    except Exception as e:
-        print(f"ERROR DETALLADO: {e}") 
-        return jsonify({"status": "error", "message": str(e)}), 400
+    if amount <= 0:
+        return None
 
-@gastos_bp.route('/unidades-selector', methods=['GET'])
-def obtener_unidades():
-    """Ruta para que el frontend cargue el selector de unidades"""
+    return str(amount)
+
+
+@gastos_bp.get("/")
+def listar_gastos():
     try:
-        res = supabase.table("unidades").select("id, piso, departamento").execute()
+        res = (
+            supabase.table("gastos_ordinarios")
+            .select("id, descripcion, monto")
+            .order("descripcion")
+            .execute()
+        )
         return jsonify(res.data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-# --- RUTAS NUEVAS PARA EDITAR Y ELIMINAR ---
 
-@gastos_bp.route('/<string:id>', methods=['PUT'])
-def actualizar_gasto(id):
-    """Actualiza un gasto existente usando su ID"""
-    data = request.json
+
+@gastos_bp.post("/")
+def crear_gasto():
+    data = request.get_json(silent=True) or {}
+    descripcion = (data.get("descripcion") or "").strip()
+    monto = parse_positive_amount(data.get("monto"))
+
+    if not descripcion or monto is None:
+        return jsonify({"error": "Descripcion y monto positivo son requeridos"}), 400
+
     try:
-        
-        res = supabase.table("gastos").update(data).eq("id", id).execute()
-        
-       
-        if not res.data:
-            return jsonify({"status": "error", "message": "Gasto no encontrado"}), 404
-            
-        return jsonify({"status": "success", "data": res.data}), 200
+        res = (
+            supabase.table("gastos_ordinarios")
+            .insert({"descripcion": descripcion, "monto": monto})
+            .execute()
+        )
+        return jsonify(res.data[0] if res.data else None), 201
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
+        return jsonify({"error": str(e)}), 400
 
 
-@gastos_bp.route('/<string:id>', methods=['DELETE'])
-def eliminar_gasto(id):
-    """Elimina un gasto permanentemente"""
+@gastos_bp.put("/<string:gasto_id>")
+def actualizar_gasto(gasto_id):
+    data = request.get_json(silent=True) or {}
+    payload = {}
+
+    if "descripcion" in data:
+        descripcion = (data.get("descripcion") or "").strip()
+        if not descripcion:
+            return jsonify({"error": "Descripcion es requerida"}), 400
+        payload["descripcion"] = descripcion
+
+    if "monto" in data:
+        monto = parse_positive_amount(data.get("monto"))
+        if monto is None:
+            return jsonify({"error": "Monto debe ser positivo"}), 400
+        payload["monto"] = monto
+
+    if not payload:
+        return jsonify({"error": "No hay campos para actualizar"}), 400
+
     try:
-        res = supabase.table("gastos").delete().eq("id", id).execute()
-        
+        res = (
+            supabase.table("gastos_ordinarios")
+            .update(payload)
+            .eq("id", gasto_id)
+            .execute()
+        )
         if not res.data:
-            return jsonify({"status": "error", "message": "Gasto no encontrado"}), 404
-            
-        return jsonify({"status": "success", "message": "Gasto eliminado exitosamente"}), 200
+            return jsonify({"error": "Gasto no encontrado"}), 404
+        return jsonify(res.data[0]), 200
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
+        return jsonify({"error": str(e)}), 400
+
+
+@gastos_bp.delete("/<string:gasto_id>")
+def eliminar_gasto(gasto_id):
+    try:
+        res = (
+            supabase.table("gastos_ordinarios")
+            .delete()
+            .eq("id", gasto_id)
+            .execute()
+        )
+        if not res.data:
+            return jsonify({"error": "Gasto no encontrado"}), 404
+        return jsonify({"message": "Gasto eliminado exitosamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

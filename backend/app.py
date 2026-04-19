@@ -6,7 +6,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from supabase import create_client
 
+from modules.expensas.routes import expensas_bp
 from modules.gastos.routes import gastos_bp
+from modules.unidades.routes import unidades_bp
 
 load_dotenv()
 
@@ -20,6 +22,8 @@ def get_cors_origins():
 
 CORS(app, origins=get_cors_origins())
 app.register_blueprint(gastos_bp, url_prefix="/api/gastos")
+app.register_blueprint(unidades_bp, url_prefix="/api/unidades")
+app.register_blueprint(expensas_bp, url_prefix="/api/expensas")
 
 
 def get_supabase():

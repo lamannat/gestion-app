@@ -1,0 +1,21 @@
+Para la funcionalidad de gastos se requiere que el administrador pueda agregar gastos que se dividiran entre la totalidad de unidades habitacionales (departamentos) segun la superficie de cada uno.
+Cada unidad cuenta con un id, piso, apartamento (indica letra del mismo), nombre_responsable (el dueño), dni_responsable, mail_responsable, tel_responsable y superficie (metros cuadrados).
+El campo superficie debe añadirse a la tabla
+
+Para los gastos se debe implementar una nueva tabla gastos_ordinarios y los endpoints para crear, modificar y eliminar dichas entradas.
+Se debe implementar un endpoint "calcular" el cual sume todos los gastos ordinarios y los divida entre las unidades ponderando la superficie de cada una.
+
+Al iniciar sesion se debe ir a una pantalla de inicio que cuente con tres botones que lleven a distintas pantallas:
+ 1. "gastos"
+ 2. "unidades"
+ 3. "calcular expensas"
+
+1. Gastos
+ Esta pantalla muestra los gastos ordinarios y posee botones para crear, modificar o eliminar gastos
+
+2. Unidades
+ Esta pantalla muestra las unidades existentes y posee botones para crear, modificar o eliminar unidades.
+
+3. Calcular expensas
+ Al pulsar este boton se calculan los gastos por unidad mediante el endpoint calcular y se va a una pantalla que muestre las expensas a pagar por cada unidad.
+
