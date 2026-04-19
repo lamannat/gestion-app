@@ -33,25 +33,29 @@ export default function UserHomePage() {
   return (
     <main style={styles.main}>
       <section style={styles.section}>
-        <h1 style={styles.title}>Mi usuario</h1>
-        {isLoading && <p>Cargando...</p>}
-        {error && <p style={styles.error}>{error}</p>}
-        {profile && (
-          <dl style={styles.details}>
-            <dt>ID</dt>
-            <dd>{profile.id}</dd>
-            <dt>Usuario</dt>
-            <dd>{profile.user}</dd>
-          </dl>
-        )}
-        <div style={styles.actions}>
-          <Link href="/" style={styles.link}>
-            Inicio
-          </Link>
-          <button type="button" onClick={handleLogout} style={styles.button}>
+        <div style={styles.header}>
+          <div>
+            <h1 style={styles.title}>Inicio</h1>
+            {isLoading && <p style={styles.text}>Cargando...</p>}
+            {error && <p style={styles.error}>{error}</p>}
+            {profile && <p style={styles.text}>Usuario: {profile.user}</p>}
+          </div>
+          <button type="button" onClick={handleLogout} style={styles.secondaryButton}>
             Cerrar sesion
           </button>
         </div>
+
+        <nav style={styles.actions}>
+          <Link href="/gastos" style={styles.button}>
+            Gastos
+          </Link>
+          <Link href="/unidades" style={styles.button}>
+            Unidades
+          </Link>
+          <Link href="/expensas" style={styles.button}>
+            Calcular expensas
+          </Link>
+        </nav>
       </section>
     </main>
   );
@@ -60,39 +64,45 @@ export default function UserHomePage() {
 const styles = {
   main: {
     minHeight: "100vh",
-    display: "grid",
-    placeItems: "center",
-    padding: "24px",
+    padding: "32px",
     fontFamily: "Arial, sans-serif",
   },
   section: {
     width: "100%",
-    maxWidth: "520px",
+    maxWidth: "860px",
+    margin: "0 auto",
     display: "grid",
-    gap: "16px",
+    gap: "24px",
   },
-  title: { margin: 0 },
-  details: {
-    display: "grid",
-    gridTemplateColumns: "100px 1fr",
-    gap: "8px",
-    margin: 0,
-  },
-  actions: {
+  header: {
     display: "flex",
+    justifyContent: "space-between",
+    gap: "16px",
+    alignItems: "start",
+    flexWrap: "wrap",
+  },
+  title: { margin: 0, fontSize: "32px" },
+  text: { margin: "8px 0 0", color: "#444" },
+  actions: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
     gap: "12px",
-    alignItems: "center",
   },
   button: {
     border: "1px solid #111",
     borderRadius: "6px",
-    padding: "10px 14px",
-    background: "#111",
+    padding: "14px",
     color: "#fff",
+    background: "#111",
+    textDecoration: "none",
+    textAlign: "center",
   },
-  link: { color: "#111" },
-  error: {
-    margin: 0,
-    color: "#b00020",
+  secondaryButton: {
+    border: "1px solid #111",
+    borderRadius: "6px",
+    padding: "10px 14px",
+    background: "#fff",
+    color: "#111",
   },
+  error: { margin: "8px 0 0", color: "#b00020" },
 };
